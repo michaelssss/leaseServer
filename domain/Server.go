@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 )
 
 type ServerOperations interface {
 	StartServer()
 	AddClient(client Client)
 	RemoveClient(client Client)
+	GetAllClients(w http.ResponseWriter,r *http.Request)
 }
 type Server struct {
 	ListenPort int
@@ -74,4 +76,8 @@ func removeValueFromArray(clients []Client, target int) []Client {
 	tem := clients[0:target-1]
 	tem2 := clients[target+1:len(clients)-1]
 	return append(tem, tem2...)
+}
+func (server *Server) GetAllClients(w http.ResponseWriter,r *http.Request) {
+	content, _ := json.Marshal(server.ClientList)
+	w.Write(content)
 }
