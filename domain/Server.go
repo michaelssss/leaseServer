@@ -46,6 +46,7 @@ func handleConnection(connection net.Conn, err error, server *Server) {
 	if nil != err {
 		fmt.Println(err)
 	}
+	client.ClientAddr = connection.RemoteAddr().String()
 	server.AddClient(client)
 	fmt.Println(server.ClientList)
 }
