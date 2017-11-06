@@ -18,6 +18,7 @@ func main() {
 	func() {
 		for _ = range ticket.C {
 			client := domain.Client{ClientName: "bbbbb", ClientAddr: getAddr().(*net.IPNet).IP.String()}
+			fmt.Println(client)
 			client.MakeDiscover()
 		}
 	}()

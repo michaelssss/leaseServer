@@ -12,7 +12,7 @@ type ServerOperations interface {
 	StartServer()
 	AddClient(client Client)
 	RemoveClient(client Client)
-	GetAllClients(w http.ResponseWriter,r *http.Request)
+	GetAllClients(w http.ResponseWriter, r *http.Request)
 }
 type Server struct {
 	ListenPort int
@@ -55,15 +55,15 @@ func (server *Server) AddClient(client Client) {
 	for _, client1 := range clients {
 		if client1.ClientName == client.ClientName {
 			client1.ClientAddr = client.ClientAddr
-			return
+			server.RemoveClient(client1)
 		}
 	}
 	server.ClientList = append(clients, client)
 }
 func (server *Server) RemoveClient(client Client) {
-	clients := server.ClientList
+	clients := &server.ClientList
 	removeList := make([]int, 0)
-	for index, value := range clients {
+	for index, value := range *clients {
 		if value.ClientName == client.ClientName {
 			removeList = append(removeList, index)
 		}
@@ -71,14 +71,16 @@ func (server *Server) RemoveClient(client Client) {
 	for _, value := range removeList {
 		clients = removeValueFromArray(clients, value)
 	}
-	server.ClientList = clients
+	server.ClientList = *clients
 }
-func removeValueFromArray(clients []Client, target int) []Client {
-	tem := clients[0:target-1]
-	tem2 := clients[target+1:len(clients)-1]
-	return append(tem, tem2...)
+func removeValueFromArray(clients *[]Client, target int) *[]Client {
+	clients1 := *clients
+	tem := clients1[0:target-1]
+	tem2 := clients1[target+1:len(clients1)-1]
+	tem = append(tem, tem2...)
+	return &tem
 }
-func (server *Server) GetAllClients(w http.ResponseWriter,r *http.Request) {
+func (server *Server) GetAllClients(w http.ResponseWriter, r *http.Request) {
 	content, _ := json.Marshal(server.ClientList)
 	w.Write(content)
 }
