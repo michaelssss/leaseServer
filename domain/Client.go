@@ -15,7 +15,7 @@ type ClientOperations interface {
 }
 
 func (client *Client) MakeDiscover() {
-	conn, err := net.Dial("tcp", "47.89.21.243:8888")
+	conn, err := net.Dial("tcp", "127.0.0.1:8888")
 	defer conn.Close()
 	result, _ := json.Marshal(client)
 	if nil != err {

@@ -52,10 +52,10 @@ func handleConnection(connection net.Conn, err error, server *Server) {
 }
 func (server *Server) AddClient(client Client) {
 	clients := server.ClientList
-	for _, client1 := range clients {
+	for index, client1 := range clients {
 		if client1.ClientName == client.ClientName {
-			client1.ClientAddr = client.ClientAddr
-			server.RemoveClient(client1)
+			clients[index].ClientAddr = client.ClientAddr
+			return
 		}
 	}
 	server.ClientList = append(clients, client)
@@ -68,17 +68,6 @@ func (server *Server) RemoveClient(client Client) {
 			removeList = append(removeList, index)
 		}
 	}
-	for _, value := range removeList {
-		clients = removeValueFromArray(clients, value)
-	}
-	server.ClientList = *clients
-}
-func removeValueFromArray(clients *[]Client, target int) *[]Client {
-	clients1 := *clients
-	tem := clients1[0:target-1]
-	tem2 := clients1[target+1:len(clients1)-1]
-	tem = append(tem, tem2...)
-	return &tem
 }
 func (server *Server) GetAllClients(w http.ResponseWriter, r *http.Request) {
 	content, _ := json.Marshal(server.ClientList)
