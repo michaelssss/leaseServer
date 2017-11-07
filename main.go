@@ -5,23 +5,23 @@ import (
 	"fmt"
 	"os"
 	"net"
-	"time"
+	"net/http"
 )
 
 func main() {
-	//server := domain.Server{ListenPort: 8888, ClientList: make([]domain.Client, 0)}
-	//http.HandleFunc("/getClient", server.GetAllClients)
-	//go http.ListenAndServe(":8080", nil)
-	//
-	//server.StartServer()
-	ticket := time.NewTicker(time.Second * 20)
-	func() {
-		for _ = range ticket.C {
-			client := domain.Client{ClientName: "bbbbb", ClientAddr: getAddr().(*net.IPNet).IP.String()}
-			fmt.Println(client)
-			client.MakeDiscover()
-		}
-	}()
+	server := domain.Server{ListenPort: 8888, ClientList: make([]domain.Client, 0)}
+	http.HandleFunc("/getClient", server.GetAllClients)
+	go http.ListenAndServe(":8080", nil)
+
+	server.StartServer()
+	//ticket := time.NewTicker(time.Second * 20)
+	//func() {
+	//	for _ = range ticket.C {
+	//		client := domain.Client{ClientName: "bbbbb", ClientAddr: getAddr().(*net.IPNet).IP.String()}
+	//		fmt.Println(client)
+	//		client.MakeDiscover()
+	//	}
+	//}()
 }
 func getAddr() net.Addr {
 	addrs, err := net.InterfaceAddrs()
