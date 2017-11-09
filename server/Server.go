@@ -26,7 +26,7 @@ func (server *Server) StartServer() {
 		panic(err)
 	}
 	go func() {
-		tick := time.Tick(time.Second * 20)
+		tick := time.Tick(time.Second * 40)
 		for _ = range tick {
 			server.ClientList = make([]Client, 0)
 		}
