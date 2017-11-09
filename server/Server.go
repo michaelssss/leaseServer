@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 type ServerOperations interface {
@@ -24,6 +25,12 @@ func (server *Server) StartServer() {
 	if nil != err {
 		panic(err)
 	}
+	go func() {
+		tick := time.Tick(time.Second * 20)
+		for _ = range tick {
+			server.ClientList = make([]Client, 0)
+		}
+	}()
 	for {
 		connection, _ := conn.Accept()
 		go handleConnection(connection, err, server)
