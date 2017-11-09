@@ -1,9 +1,4 @@
-package main
-
-import (
-	"net"
-	"encoding/json"
-)
+package server
 
 type Client struct {
 	ClientName string
