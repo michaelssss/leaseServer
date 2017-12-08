@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"time"
+	"sync"
 )
 
 type ServerOperations interface {
@@ -16,6 +17,7 @@ type ServerOperations interface {
 	GetAllClients(w http.ResponseWriter, r *http.Request)
 }
 type Server struct {
+	mu         sync.Mutex
 	ListenPort int
 	ClientList []Client
 }
@@ -28,7 +30,9 @@ func (server *Server) StartServer() {
 	go func() {
 		tick := time.Tick(time.Second * 40)
 		for _ = range tick {
+			server.mu.Lock()
 			server.ClientList = make([]Client, 0)
+			server.mu.Unlock()
 		}
 	}()
 	for {
@@ -58,6 +62,7 @@ func handleConnection(connection net.Conn, err error, server *Server) {
 	fmt.Println(server.ClientList)
 }
 func (server *Server) AddClient(client Client) {
+	server.mu.Lock()
 	clients := server.ClientList
 	for index, client1 := range clients {
 		if client1.ClientName == client.ClientName {
@@ -66,8 +71,10 @@ func (server *Server) AddClient(client Client) {
 		}
 	}
 	server.ClientList = append(clients, client)
+	server.mu.Unlock()
 }
 func (server *Server) RemoveClient(client Client) {
+	server.mu.Lock()
 	clients := &server.ClientList
 	removeList := make([]int, 0)
 	for index, value := range *clients {
@@ -75,6 +82,7 @@ func (server *Server) RemoveClient(client Client) {
 			removeList = append(removeList, index)
 		}
 	}
+	server.mu.Unlock()
 }
 func (server *Server) GetAllClients(w http.ResponseWriter, r *http.Request) {
 	content, _ := json.Marshal(server.ClientList)
