@@ -16,7 +16,7 @@ type server struct {
 }
 
 func (server *server) StartServer() {
-	conn, err := net.Listen("tcp", "127.0.0.1:8888")
+	conn, err := net.Listen("tcp", "0.0.0.0:8888")
 	if nil != err {
 		panic(err)
 	}
