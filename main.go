@@ -1,13 +1,13 @@
 package main
 
 import (
-	"net/http"
 	"leaseServer/server"
+	"os"
 )
 
 func main() {
-	server1 := server.Server{ListenPort: 8888, ClientList: make([]server.Client, 0)}
-	http.HandleFunc("/getClient", server1.GetAllClients)
-	go http.ListenAndServe(":8080", nil)
+	ss := os.Args
+	communityKey := ss[1]
+	server1 := server.Server(8888, communityKey)
 	server1.StartServer()
 }
