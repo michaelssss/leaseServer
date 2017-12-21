@@ -18,7 +18,7 @@ type MyHandleHttp interface {
 func (myHandleHttp myHandleHttpStuct) HandleHttp(w http.ResponseWriter, req *http.Request) {
 	accessKey := req.Header.Get("accessKey")
 	if accessKey == myHandleHttp.key {
-		respString := jsonResp{IP: req.RemoteAddr}
+		respString := jsonResp{IP: req.Header.Get("X-real-ip")}
 		jsonbyte, _ := json.Marshal(respString)
 		header:=w.Header()
 		header.Add("hello","world")

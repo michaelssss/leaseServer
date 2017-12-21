@@ -13,5 +13,4 @@ func main() {
 	http.Handle("/", server.MyHandleHttpStuct(communityKey))
 	go http.ListenAndServe("0.0.0.0:8889", nil)
 	server1.StartServer()
-
 }
