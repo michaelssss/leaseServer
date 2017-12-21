@@ -4,6 +4,7 @@ import (
 	"leaseServer/server"
 	"os"
 	"net/http"
+	_ "net/http/pprof"
 )
 
 func main() {
