@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 	"fmt"
+	"time"
 )
 
 type Operation interface {
@@ -22,11 +23,13 @@ func (server *server) StartServer() {
 	}
 	for {
 		connection, _ := conn.Accept()
+		connection.SetReadDeadline(time.Now().Add(2 * time.Second))
 		go handleConnection(connection, server)
 	}
 }
 func handleConnection(connection net.Conn, server *server) {
 	defer connection.Close()
+
 	cache := make([]byte, 512)
 	content := make([]byte, 0)
 	for {
