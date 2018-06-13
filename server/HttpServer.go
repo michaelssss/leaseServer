@@ -1,15 +1,16 @@
 package server
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
 type jsonResp struct {
 	IP string
 }
 type myHandleHttpStuct struct {
-	key string
+	key            string
+	liveClientBook LiveClientBookAction
 }
 type MyHandleHttp interface {
 	HandleHttp(w http.ResponseWriter, req *http.Request)
@@ -27,6 +28,7 @@ func (myHandleHttp myHandleHttpStuct) HandleHttp(w http.ResponseWriter, req *htt
 		}
 		respString := jsonResp{IP: ip1}
 		jsonbyte, _ := json.Marshal(respString)
+		myHandleHttp.liveClientBook.AddLiveClient(accessKey)
 		w.Write(jsonbyte)
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
@@ -35,6 +37,6 @@ func (myHandleHttp myHandleHttpStuct) HandleHttp(w http.ResponseWriter, req *htt
 func (myHandleHttp myHandleHttpStuct) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	myHandleHttp.HandleHttp(w, req)
 }
-func MyHandleHttpStuct(key1 string) http.Handler {
-	return myHandleHttpStuct{key: key1}
+func MyHandleHttpStuct(key1 string, liveClientBook LiveClientBookAction) http.Handler {
+	return myHandleHttpStuct{key: key1, liveClientBook: liveClientBook}
 }

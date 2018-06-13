@@ -1,10 +1,10 @@
 package server
 
 import (
-	"net"
-	"io"
-	"strings"
 	"fmt"
+	"io"
+	"net"
+	"strings"
 	"time"
 )
 
@@ -12,8 +12,9 @@ type Operation interface {
 	StartServer()
 }
 type server struct {
-	ListenPort int
-	secretKey  string
+	ListenPort     int
+	secretKey      string
+	liveClientBook LiveClientBookAction
 }
 
 func (server *server) StartServer() {
@@ -34,7 +35,7 @@ func handleConnection(connection net.Conn, server *server) {
 	content := make([]byte, 0)
 	for {
 		length, err := connection.Read(cache)
-		content = append(content, cache[0: length]...)
+		content = append(content, cache[0:length]...)
 		if io.EOF != err {
 			break
 		}
@@ -42,12 +43,13 @@ func handleConnection(connection net.Conn, server *server) {
 	code := string(content)
 	code = strings.TrimSpace(code)
 	if strings.Contains(code, server.secretKey) {
+
 		_, err := connection.Write([]byte(connection.RemoteAddr().String()))
 		if nil != err {
 			fmt.Println(err.Error())
 		}
 	}
 }
-func Server(port int, key string) server {
-	return server{ListenPort: port, secretKey: key}
+func Server(port int, key string, liveClientBook LiveClientBookAction) server {
+	return server{ListenPort: port, secretKey: key, liveClientBook: liveClientBook}
 }
