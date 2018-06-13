@@ -43,7 +43,7 @@ func handleConnection(connection net.Conn, server *server) {
 	code := string(content)
 	code = strings.TrimSpace(code)
 	if strings.Contains(code, server.secretKey) {
-
+		server.liveClientBook.AddLiveClient(connection.RemoteAddr().String())
 		_, err := connection.Write([]byte(connection.RemoteAddr().String()))
 		if nil != err {
 			fmt.Println(err.Error())
