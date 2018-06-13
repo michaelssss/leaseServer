@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"time"
+	"fmt"
 )
 
 type liveClient struct {
@@ -34,6 +35,7 @@ func (liveClientBook *liveClientBook) IsAlive(clientIndetify string) bool {
 	return false
 }
 func (liveClientBook *liveClientBook) AddLiveClient(clientIndetify string) {
+	fmt.Println(liveClientBook.GetAllClientJSON())
 	clean(liveClientBook)
 	if !liveClientBook.IsAlive(clientIndetify) {
 		liveClient := liveClient{clientIndetify: clientIndetify, expireTime: time.Now().Add(time.Second * 15)}
