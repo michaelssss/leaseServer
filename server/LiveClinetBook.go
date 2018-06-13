@@ -34,10 +34,36 @@ func (liveClientBook *liveClientBook) IsAlive(clientIndetify string) bool {
 	return false
 }
 func (liveClientBook *liveClientBook) AddLiveClient(clientIndetify string) {
-	liveClient := liveClient{clientIndetify: clientIndetify, expireTime: time.Now().Add(time.Second * 15)}
-	liveClientBook.liveClients = append(liveClientBook.liveClients, liveClient)
+	clean(liveClientBook)
+	if !liveClientBook.IsAlive(clientIndetify) {
+		liveClient := liveClient{clientIndetify: clientIndetify, expireTime: time.Now().Add(time.Second * 15)}
+		liveClientBook.liveClients = append(liveClientBook.liveClients, liveClient)
+	}
 }
-
+func clean(book *liveClientBook) {
+	client := book.liveClients
+	indexs := []int{}
+	for index, value := range client {
+		if value.expireTime.After(time.Now()) {
+			indexs = append(indexs, index)
+		}
+	}
+	newClient := []liveClient{}
+	for index, value := range client {
+		if !isElementContain(&indexs, index) {
+			newClient = append(newClient, value)
+		}
+	}
+	book.liveClients = newClient
+}
+func isElementContain(array *[]int, element int) bool {
+	for _, value := range *array {
+		if value == element {
+			return true
+		}
+	}
+	return false
+}
 func NewLiveClientBook() LiveClientBookAction {
 	liveClients := []liveClient{}
 	liveClientBook := liveClientBook{liveClients: liveClients}
