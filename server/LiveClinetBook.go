@@ -3,12 +3,11 @@ package server
 import (
 	"encoding/json"
 	"time"
-	"fmt"
 )
 
 type liveClient struct {
-	expireTime     time.Time
-	clientIndetify string
+	ExpireTime     time.Time `json:"expireTime"`
+	ClientIndetify string `json:"clientIndetify"`
 }
 
 type liveClientBook struct {
@@ -28,17 +27,16 @@ func (liveClientBook *liveClientBook) GetAllClientJSON() string {
 
 func (liveClientBook *liveClientBook) IsAlive(clientIndetify string) bool {
 	for _, liveClient := range liveClientBook.liveClients {
-		if liveClient.clientIndetify == clientIndetify && time.Now().Before(liveClient.expireTime) {
+		if liveClient.ClientIndetify == clientIndetify && time.Now().Before(liveClient.ExpireTime) {
 			return true
 		}
 	}
 	return false
 }
 func (liveClientBook *liveClientBook) AddLiveClient(clientIndetify string) {
-	fmt.Println(liveClientBook.GetAllClientJSON())
 	clean(liveClientBook)
 	if !liveClientBook.IsAlive(clientIndetify) {
-		liveClient := liveClient{clientIndetify: clientIndetify, expireTime: time.Now().Add(time.Second * 15)}
+		liveClient := liveClient{ClientIndetify: clientIndetify, ExpireTime: time.Now().Add(time.Second * 15)}
 		liveClientBook.liveClients = append(liveClientBook.liveClients, liveClient)
 	}
 }
@@ -46,7 +44,7 @@ func clean(book *liveClientBook) {
 	client := book.liveClients
 	indexs := []int{}
 	for index, value := range client {
-		if value.expireTime.After(time.Now()) {
+		if time.Now().After(value.ExpireTime) {
 			indexs = append(indexs, index)
 		}
 	}
