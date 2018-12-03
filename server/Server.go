@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,7 +19,7 @@ type server struct {
 }
 
 func (server *server) StartServer() {
-	conn, err := net.Listen("tcp", "0.0.0.0:8888")
+	conn, err := net.Listen("tcp6", "[::]:"+strconv.Itoa(server.ListenPort))
 	if nil != err {
 		panic(err)
 	}
