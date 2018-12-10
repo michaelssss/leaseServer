@@ -19,7 +19,7 @@ type server struct {
 }
 
 func (server *server) StartServer() {
-	conn, err := net.Listen("tcp", "127.0.0.1"+strconv.Itoa(server.ListenPort))
+	conn, err := net.Listen("tcp", "127.0.0.1"+":"+strconv.Itoa(server.ListenPort))
 	if nil != err {
 		panic(err)
 	}
